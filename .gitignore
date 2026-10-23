@@ -1,0 +1,25 @@
+# votes - local generated files (never commit run outputs)
+satuk_agent/votes_folder/
+!satuk_agent/votes_folder/.template.yaml
+!satuk_agent/votes_folder/.gitkeep
+satuk_agent/submission_log.csv
+satuk_agent/.vote_counter.json
+satuk_agent/votes_input/*.bak
+
+# Excel lock files and local run logs
+satuk_agent/votes_input/~$*
+satuk_agent/votes_input/_counter_test/
+satuk_agent/*_run.log
+satuk_agent/*_run_err.log
+~$*.xlsx
+
+# Cross-process lock files & worker logs
+satuk_agent/.vote_counter.lock
+satuk_agent/.submission_log.lock
+satuk_agent/run*.log
+satuk_agent/run*.err
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo

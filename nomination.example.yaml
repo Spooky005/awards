@@ -1,0 +1,10 @@
+category_id: "4"   # Student Leader of the Year (run `python agent.py list-categories` for IDs)
+nominee_name: "Wanjiku Kamau"
+nominee_email: "wanjiku.kamau@students.tukenya.ac.ke"
+nominee_phone: "+254 712 345 678"
+nominee_details: "Third-year Electrical & Electronic Engineering student at TU-K"
+reason: "Wanjiku led the campus mentorship programme that paired over 120 first-year students with senior mentors, measurably improving first-year retention and course pass rates this academic year."
+supporting_info: "https://example.com/mentorship-programme-report"
+nominator_name: "Brian Otieno"
+nominator_email: "brian.otieno@students.tukenya.ac.ke"
+nominator_phone: "+254 733 456 789"
