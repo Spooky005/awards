@@ -1,11 +1,26 @@
 name: SATUK Automated Vote Run
 
 on:
-  workflow_dispatch: # Allows you to trigger this manually from the GitHub website
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
   run-voting-loadtest:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Keeps all other servers running even if one fails
+      matrix:
+        server-id: [
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+          11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+          21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+          31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+          41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+          51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+          61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+          71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+          81, 82, 83, 84, 85, 86, 87, 88, 89, 90,
+          91, 92, 93, 94, 95, 96, 97, 98, 99, 100
+        ]
 
     steps:
       - name: Checkout Repository
@@ -15,32 +30,25 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r satuk_agent/requirements.txt
-          pip install openpyxl
+          pip install -r satuk_agent/requirements.txt openpyxl
 
-      - name: Step 1 - Generate YAMLs for All 4 Servers (30-Min Window)
+      - name: Generate Config for Server ${{ matrix.server-id }}
         run: |
-          python satuk_agent/loadtest_gen.py --server-id 1 --csv satuk_agent/newdata.xlsx --minutes 10 --clear --nominee AECAS
-          python satuk_agent/loadtest_gen.py --server-id 2 --csv satuk_agent/newdata.xlsx --minutes 10 --clear --nominee AECAS
-          python satuk_agent/loadtest_gen.py --server-id 3 --csv satuk_agent/newdata.xlsx --minutes 10 --clear --nominee AECAS
-          python satuk_agent/loadtest_gen.py --server-id 4 --csv satuk_agent/newdata.xlsx --minutes 10 --clear --nominee AECAS
+          python satuk_agent/loadtest_gen.py --server-id ${{ matrix.server-id }} --csv satuk_agent/newdata.xlsx --minutes 10 --clear --nominee AECAS
 
-      - name: Step 2 - Run All 4 Servers Concurrently
+      - name: Run Load Test for Server ${{ matrix.server-id }}
         run: |
-          # Run all 4 server instances in the background (&) and wait for them to finish (wait)
-          python satuk_agent/loadtest_run.py --server-id 1 --workers 32 --max-rps 200 --live --allow-real --no-resume --no-seek &
-          python satuk_agent/loadtest_run.py --server-id 2 --workers 32 --max-rps 200 --live --allow-real --no-resume --no-seek &
-          python satuk_agent/loadtest_run.py --server-id 3 --workers 32 --max-rps 200 --live --allow-real --no-resume --no-seek &
-          python satuk_agent/loadtest_run.py --server-id 4 --workers 32 --max-rps 200 --live --allow-real --no-resume --no-seek &
-          wait
+          python satuk_agent/loadtest_run.py --server-id ${{ matrix.server-id }} --workers 32 --max-rps 200 --live --allow-real --no-resume --no-seek
 
-      - name: Upload Results Logs (Artifacts)
+      - name: Upload Results Log (Server ${{ matrix.server-id }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vote-results-logs
-          path: satuk_agent/votes_folder/results_s*.csv
+          name: vote-results-server-${{ matrix.server-id }}
+          path: satuk_agent/votes_folder/results_s${{ matrix.server-id }}.csv
+          retention-days: 7
